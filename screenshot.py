@@ -113,7 +113,7 @@ def screenshot(browser, name):
             print('crop saved')
         else:
             browser.save_screenshot(name)
-        print("suucess saving screnshot: %s" % name)
+        print("success saving screnshot: %s" % name)
     except:
         print("exception in screenshot()")
         print(sys.exc_info()[0])
