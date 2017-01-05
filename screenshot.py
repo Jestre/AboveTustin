@@ -23,14 +23,17 @@ abovetustin_image_height = int(parser.get('abovetustin', 'image_height'))
 
 #  Check for Crop settings
 if parser.has_section('crop'):
+    do_crop = parser.getboolean('crop', 'do_crop')
     try:
         from PIL import Image
         from io import BytesIO
     except ImportError:
         print('Image manipulation module "Pillow" not found, cropping disabled')
         do_crop = False
-    do_crop = parser.getboolean('crop', 'do_crop')
+
     if do_crop:
+        crop_x = parser.getint('crop', 'crop_x')
+        crop_y = parser.getint('crop', 'crop_y')
         crop_width = parser.getint('crop', 'crop_width')
         crop_height = parser.getint('crop', 'crop_height')
         crop_overlay = parser.getboolean('crop', 'crop_overlay')
@@ -44,8 +47,8 @@ dump1090_request_timeout = int(parser.get('dump1090', 'request_timeout'))
 
 def loadmap():
     '''
-    loadmap() 
-    Creates a browser object and loads the webpage.  
+    loadmap()
+    Creates a browser object and loads the webpage.
     It sets up the map to the proper zoom level.
 
     Returns the browser on success, None on fail.
@@ -63,11 +66,11 @@ def loadmap():
         print ("waiting for page to load...")
         wait = WebDriverWait(browser, timeout)
         element = wait.until(EC.element_to_be_clickable((By.ID,'dump1090_version')))
-    
+
         print("reset map:")
         resetbutton = browser.find_elements_by_xpath("//*[contains(text(), 'Reset Map')]")
         resetbutton[0].click()
-        
+
         print("zoom in 4 times:")
         zoomin = browser.find_element_by_class_name('ol-zoom-in')
         zoomin.click()
@@ -100,7 +103,7 @@ def screenshot(browser, name):
                 highlight = im.crop((860, 120, 1250, 280))
 
             #  Crop to specifications
-            im = im.crop((0,0, crop_width, crop_height or abovetustin_image_height))
+            im = im.crop((crop_x, crop_y, crop_width, crop_height or abovetustin_image_height))
 
             if crop_overlay:
                 w, h = im.size
@@ -140,4 +143,3 @@ def clickOnAirplane(browser, text):
         print (sys.exc_info()[0])
 
     return False
-
